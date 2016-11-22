@@ -4,6 +4,7 @@ import component1.Node;
 import component1.Route;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -22,12 +23,12 @@ public class ProblemInitializer {
      * This list will keep all the nodes of the problem.
      * NOTE: position 0 of the list contains the depot.
      */
-    private ArrayList<Node> customers;
+    private List<Node> customers;
 
     /**
      * All the available vehicles.
      */
-    private ArrayList<Route> vehicles;
+    private List<Route> vehicles;
 
     /**
      * A 2-D matrix that will keep the distances of every node to each other.
@@ -39,16 +40,16 @@ public class ProblemInitializer {
      */
     private int numberOfNodes;
 
-    public ArrayList<Node> getCustomers() {
-        return this.customers;
+    public List<Node> getCustomers() {
+        return new ArrayList<>(this.customers);
     }
 
     public double[][] getDistanceMatrix() {
         return this.distanceMatrix;
     }
 
-    public ArrayList<Route> getVehicles() {
-        return this.vehicles;
+    public List<Route> getVehicles() {
+        return new ArrayList<>(this.vehicles);
     }
 
     /**
@@ -69,6 +70,9 @@ public class ProblemInitializer {
         this.createDistanceMatrix();
     }
 
+    /**
+     * A helper function that initializes the customer list.
+     */
     private void initializeCustomers() {
         // First of all, add the depot.
         Node depot = new Node();
@@ -90,12 +94,18 @@ public class ProblemInitializer {
         }
     }
 
+    /**
+     * A helper function that initializes the vehicle list.
+     */
     private void initializeVehicles(int numOfVehicles) {
         for (int i = 0; i < numOfVehicles; i++) {
             this.vehicles.add(new Route(50));
         }
     }
 
+    /**
+     * A helper function that creates the distance matrix.
+     */
     private void createDistanceMatrix() {
         for (int i = 0; i < this.numberOfNodes; i++) {
             Node n1 = this.customers.get(i);

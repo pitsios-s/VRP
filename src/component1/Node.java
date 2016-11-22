@@ -28,16 +28,9 @@ public class Node implements Cloneable {
     private int demand;
 
     /**
-     * A boolean attribute indicating whether or not the customer has been inserted in any route.
-     */
-    private boolean isRouted;
-
-    /**
      * Empty default constructor.
      */
-    public Node() {
-        this.isRouted = false;
-    }
+    public Node() {}
 
     public int getX() {
         return x;
@@ -69,14 +62,6 @@ public class Node implements Cloneable {
 
     public void setDemand(int demand) {
         this.demand = demand;
-    }
-
-    public boolean isRouted() {
-        return isRouted;
-    }
-
-    public void setRouted(boolean routed) {
-        isRouted = routed;
     }
 
     @Override

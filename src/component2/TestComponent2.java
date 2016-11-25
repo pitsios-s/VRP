@@ -1,5 +1,8 @@
 package component2;
 
+/**
+ * @author Stamatis Pitsios
+ */
 public class TestComponent2 {
 
     public static void main(String[] args) {

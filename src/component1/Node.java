@@ -5,7 +5,7 @@ package component1;
  *
  * Every instance of this class represents a Node (customer) of the VRP problem.
  */
-public class Node implements Cloneable {
+public class Node {
 
     /**
      * The X-axis coordinate in a theoretical 2-D space for the specific customer.
@@ -88,10 +88,5 @@ public class Node implements Cloneable {
     @Override
     public int hashCode() {
         return id;
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
     }
 }

@@ -18,7 +18,7 @@ public class Solution {
     /**
      * The total cost of the solution. It is calculated as the sum of the costs of all routes.
      */
-    double totalCost;
+    private double totalCost;
 
     /**
      * Default constructor
@@ -30,10 +30,6 @@ public class Solution {
 
     public List<Route> getRoutes() {
         return routes;
-    }
-
-    public void setRoutes(List<Route> routes) {
-        this.routes = routes;
     }
 
     public void addRoute(Route route) {

@@ -37,6 +37,10 @@ public class GreedyVRP {
         this.distanceMatrix = initializer.getDistanceMatrix();
     }
 
+    public double[][] getDistanceMatrix() {
+        return distanceMatrix;
+    }
+
     /**
      * Finds and returns a solution to the VRP using greedy algorithm approach
      *

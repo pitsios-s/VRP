@@ -8,7 +8,7 @@ import java.util.List;
  *
  * Every instance of this class represents a Route (Vehicle) that will be used in order to serve a set of customers
  */
-public class Route implements Cloneable {
+public class Route {
 
     /**
      * The total capacity of the current vehicle.
@@ -56,10 +56,6 @@ public class Route implements Cloneable {
 
     public List<Node> getRoute() {
         return route;
-    }
-
-    public void setRoute(List<Node> route) {
-        this.route = route;
     }
 
     /**
@@ -114,10 +110,5 @@ public class Route implements Cloneable {
                 ", route=" + route +
                 ", cost=" + cost +
                 '}';
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
     }
 }

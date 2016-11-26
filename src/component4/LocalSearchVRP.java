@@ -2,7 +2,7 @@ package component4;
 
 import component1.Node;
 import component1.Solution;
-import component3.GreedyVRP;
+import component5.InterRelocationMove;
 
 /**
  * @author Stamatis Pitsios
@@ -10,12 +10,7 @@ import component3.GreedyVRP;
  * This class contains all the necessary functionality in order to find a better solution than the one we got with
  * greedy approch, by using local search method.
  */
-class LocalSearchVRP {
-
-    /**
-     * The solution of the VRP using greedy method
-     */
-    private Solution greedySolution;
+public class LocalSearchVRP {
 
     /**
      * The distance matrix
@@ -25,55 +20,137 @@ class LocalSearchVRP {
     /**
      * Default Constructor
      */
-    LocalSearchVRP() {
-        // Get the solution of greedy method.
-        GreedyVRP greedyVRP = new GreedyVRP();
-        this.greedySolution = greedyVRP.findSolution();
-
-        this.distanceMatrix = greedyVRP.getDistanceMatrix();
+    public LocalSearchVRP(double[][] distanceMatrix) {
+        this.distanceMatrix = distanceMatrix;
     }
 
-    Solution findSolution() {
+    /**
+     * Finds the best possible neighbor of a given solution, by checking all possible intra-route relocation moves.
+     *
+     * @param solution The solution which we want to improve
+     * @return IntraRelocationMove the best possible intra relocation move
+     */
+    public IntraRelocationMove findBestIntraRelocationMove(Solution solution) {
 
-        // The number of iterations that the local search algorithm performed.
-        int iterations = 0;
+        // Create an IntraRelocationMove object
+        IntraRelocationMove relocationMove = new IntraRelocationMove();
 
-        // Print the initial cost found using greedy method
-        System.out.println("Initial Cost: " + this.greedySolution.getTotalCost());
+        // Loop for every vehicle that serves a set of customers
+        for (int i = 0; i < solution.getRoutes().size(); i++) {
 
-        // Repeat until no better solution found
-        while (true) {
+            // Loop for every customer in the current route
+            for (int j = 1; j <solution.getRoutes().get(i).getRoute().size() - 1; j++) {
 
-            // Create an IntraRelocationMove object
-            IntraRelocationMove relocationMove = new IntraRelocationMove();
+                // The customer to be relocated
+                Node relocatedCustomer = solution.getRoutes().get(i).getRoute().get(j);
 
-            // Loop for every vehicle that serves a set of customers
-            for (int i = 0; i < greedySolution.getRoutes().size(); i++) {
+                // Predecessor of "relocatedCustomer"
+                Node predecessor = solution.getRoutes().get(i).getRoute().get(j - 1);
 
-                // Loop for every customer in the current route
-                for (int j = 1; j < greedySolution.getRoutes().get(i).getRoute().size() - 1; j++) {
+                // Successor of "relocatedCustomer"
+                Node successor = solution.getRoutes().get(i).getRoute().get(j + 1);
 
-                    // The customer to be relocated
-                    Node relocatedCustomer = greedySolution.getRoutes().get(i).getRoute().get(j);
+                // Loop for every possible relocation position
+                for (int k = 1; k < solution.getRoutes().get(i).getRoute().size() - 1; k++) {
 
-                    // Predecessor of "relocatedCustomer"
-                    Node predecessor = greedySolution.getRoutes().get(i).getRoute().get(j - 1);
+                    // If the 2 customers are the same in the current iteration, ignore this iteration
+                    if (j == k || k == j - 1)
+                        continue;
 
-                    // Successor of "relocatedCustomer"
-                    Node successor = greedySolution.getRoutes().get(i).getRoute().get(j + 1);
+                    // The node after which "relocatedCustomer" is going to be inserted.
+                    Node after = solution.getRoutes().get(i).getRoute().get(k);
 
-                    // Loop for every possible relocation position
-                    for (int k = 1; k < greedySolution.getRoutes().get(i).getRoute().size() - 1; k++) {
+                    // The successor node of node "after"
+                    Node afterSuccessor = solution.getRoutes().get(i).getRoute().get(k + 1);
 
-                        // If the 2 customers are the same in the current iteration, ignore this iteration
-                        if (j == k || k == j - 1)
-                            continue;
+                    // Calculate the cost of the solution, if we apply the specific relocation move.
+                    double costRemoved = this.distanceMatrix[predecessor.getId()][relocatedCustomer.getId()] +
+                            this.distanceMatrix[relocatedCustomer.getId()][successor.getId()] +
+                            this.distanceMatrix[after.getId()][afterSuccessor.getId()];
 
+                    double costAdded = this.distanceMatrix[after.getId()][relocatedCustomer.getId()] +
+                            this.distanceMatrix[relocatedCustomer.getId()][afterSuccessor.getId()] +
+                            this.distanceMatrix[predecessor.getId()][successor.getId()];
+
+                    double newCost = costAdded - costRemoved;
+
+                    // If the move is the best found so far, store it
+                    if (newCost < relocationMove.getCost()) {
+                        relocationMove.setCost(newCost);
+                        relocationMove.setRoute(i);
+                        relocationMove.setCustomerPosition(j);
+                        relocationMove.setRelocationPosition(k);
+                    }
+                }
+            }
+        }
+
+        return relocationMove;
+    }
+
+    /**
+     * Applies an intra-route relocation move to a given solution
+     *
+     * @param solution The solution to improve
+     * @param move The relocation move to be applied
+     */
+    public void applyIntraRelocationMove(Solution solution, IntraRelocationMove move) {
+        // Update the cost of the whole solution
+        solution.setTotalCost(solution.getTotalCost() + move.getCost());
+
+        // Update the cost within the specific route.
+        solution.getRoutes().get(move.getRoute()).setCost(solution.getRoutes().get(move.getRoute()).getCost() + move.getCost());
+
+        // The node to be relocated
+        Node relocatedNode = solution.getRoutes().get(move.getRoute()).removeNode(move.getCustomerPosition());
+
+        // Relocate the necessary nodes.
+        if (move.getCustomerPosition() < move.getRelocationPosition())
+            solution.getRoutes().get(move.getRoute()).addNodeToRouteWithIndex(relocatedNode, move.getRelocationPosition());
+        else
+            solution.getRoutes().get(move.getRoute()).addNodeToRouteWithIndex(relocatedNode, move.getRelocationPosition() + 1);
+    }
+
+    /**
+     * Finds the best possible neighbor of a given solution, by checking all possible inter-route relocation moves.
+     *
+     * @param solution The solution which we want to improve
+     * @return InterRelocationMove the best possible inter relocation move
+     */
+    public InterRelocationMove findBestInterRelocationMove(Solution solution) {
+
+        // The best inter-relocation move found so far.
+        InterRelocationMove move = new InterRelocationMove();
+
+        // Loop for every route of the solution
+        for (int i = 0; i < solution.getRoutes().size(); i++) {
+
+            // Loop for every customer within the i-th route
+            for (int j = 1; j < solution.getRoutes().get(i).getRoute().size() - 1; j++) {
+
+                // The customer to be relocated
+                Node relocatedCustomer = solution.getRoutes().get(i).getRoute().get(j);
+
+                // Predecessor of "relocatedCustomer"
+                Node predecessor = solution.getRoutes().get(i).getRoute().get(j - 1);
+
+                // Successor of "relocatedCustomer"
+                Node successor = solution.getRoutes().get(i).getRoute().get(j + 1);
+
+                // Loop for every other possible route of the solution
+                for (int k = 0; k < solution.getRoutes().size(); k++) {
+
+                    // If the 2 routes are the same, ignore them, since this is the case of intra relocation
+                    if (i == k)
+                        continue;
+
+                    // Loop for every customer within the second route
+                    for (int l = 0; l < solution.getRoutes().get(k).getRoute().size() - 1; l++) {
                         // The node after which "relocatedCustomer" is going to be inserted.
-                        Node after = greedySolution.getRoutes().get(i).getRoute().get(k);
+                        Node after = solution.getRoutes().get(k).getRoute().get(l);
 
                         // The successor node of node "after"
-                        Node afterSuccessor = greedySolution.getRoutes().get(i).getRoute().get(k + 1);
+                        Node afterSuccessor = solution.getRoutes().get(k).getRoute().get(l + 1);
 
                         // Calculate the cost of the solution, if we apply the specific relocation move.
                         double costRemoved = this.distanceMatrix[predecessor.getId()][relocatedCustomer.getId()] +
@@ -84,50 +161,65 @@ class LocalSearchVRP {
                                 this.distanceMatrix[relocatedCustomer.getId()][afterSuccessor.getId()] +
                                 this.distanceMatrix[predecessor.getId()][successor.getId()];
 
+                        // The new cost within route i
+                        double costI = this.distanceMatrix[predecessor.getId()][successor.getId()] -
+                                this.distanceMatrix[predecessor.getId()][relocatedCustomer.getId()] -
+                                this.distanceMatrix[relocatedCustomer.getId()][successor.getId()];
+
+                        // The new cost within route l
+                        double costL = this.distanceMatrix[after.getId()][relocatedCustomer.getId()] +
+                                this.distanceMatrix[relocatedCustomer.getId()][afterSuccessor.getId()] -
+                                this.distanceMatrix[after.getId()][afterSuccessor.getId()];
+
+                        // The difference in the cost of the final solution
                         double newCost = costAdded - costRemoved;
 
-                        // If the move is the best found so far, store it
-                        if (newCost < relocationMove.getCost()) {
-                            relocationMove.setCost(newCost);
-                            relocationMove.setRoute(i);
-                            relocationMove.setCustomerPosition(j);
-                            relocationMove.setRelocationPosition(k);
+                        // If the move is the best found so far and the relocation of a customer into a new route does not exceeds the vehicle's capacity, store the move.
+                        if (newCost < move.getCost() && solution.getRoutes().get(k).getLoad() + relocatedCustomer.getDemand() <= solution.getRoutes().get(k).getCapacity()) {
+                            move.setCost(newCost);
+                            move.setRouteFrom(i);
+                            move.setRouteTo(k);
+                            move.setCustomerPosition(j);
+                            move.setRelocationPosition(l);
+                            move.setOriginCost(costI);
+                            move.setDestinationCost(costL);
                         }
                     }
                 }
             }
-
-            // Increase number of iterations
-            iterations++;
-
-            if (relocationMove.getCost() >= 0)
-                break;
-            else {
-                applyIntraRelocationMove(relocationMove);
-
-                // Print the new total cost
-                System.out.println("Iteration " + iterations + " - New Total Cost: " + this.greedySolution.getTotalCost());
-            }
         }
 
-        return this.greedySolution;
+        // Return the move.
+        return move;
     }
 
-    private void applyIntraRelocationMove(IntraRelocationMove move) {
-        // Update the cost of the whole solution
-        this.greedySolution.setTotalCost(this.greedySolution.getTotalCost() + move.getCost());
+    /**
+     * Applies an inter-route relocation move to a given solution
+     *
+     * @param solution The solution to improve
+     * @param move The relocation move to be applied
+     */
+    public void applyInterRelocationMove(Solution solution, InterRelocationMove move) {
 
-        // Update the cost within the specific route.
-        this.greedySolution.getRoutes().get(move.getRoute()).setCost(this.greedySolution.getRoutes().
-                get(move.getRoute()).getCost() + move.getCost());
+        // Update the cost of the whole solution
+        solution.setTotalCost(solution.getTotalCost() + move.getCost());
+
+        // Update the cost within the origin route.
+        solution.getRoutes().get(move.getRouteFrom()).setCost(solution.getRoutes().get(move.getRouteFrom()).getCost() + move.getOriginCost());
+
+        // Update the cost within the destination route.
+        solution.getRoutes().get(move.getRouteTo()).setCost(solution.getRoutes().get(move.getRouteTo()).getCost() + move.getDestinationCost());
 
         // The node to be relocated
-        Node relocatedNode = this.greedySolution.getRoutes().get(move.getRoute()).removeNode(move.getCustomerPosition());
+        Node relocatedNode = solution.getRoutes().get(move.getRouteFrom()).removeNode(move.getCustomerPosition());
 
-        // Relocate the necessary nodes.
-        if (move.getCustomerPosition() < move.getRelocationPosition())
-            this.greedySolution.getRoutes().get(move.getRoute()).addNodeToRouteWithIndex(relocatedNode, move.getRelocationPosition());
-        else
-            this.greedySolution.getRoutes().get(move.getRoute()).addNodeToRouteWithIndex(relocatedNode, move.getRelocationPosition() + 1);
+        // Decrease the load of the origin route
+        solution.getRoutes().get(move.getRouteFrom()).setLoad(solution.getRoutes().get(move.getRouteFrom()).getLoad() - relocatedNode.getDemand());
+
+        // Increase the load of the destination route
+        solution.getRoutes().get(move.getRouteTo()).setLoad(solution.getRoutes().get(move.getRouteTo()).getLoad() + relocatedNode.getDemand());
+
+        // Relocate the node into the new route
+        solution.getRoutes().get(move.getRouteTo()).addNodeToRouteWithIndex(relocatedNode, move.getRelocationPosition() + 1);
     }
 }

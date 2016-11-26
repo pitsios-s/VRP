@@ -1,12 +1,14 @@
-package component4;
+package component5;
 
 import component1.Solution;
 import component3.GreedyVRP;
+import component4.IntraRelocationMove;
+import component4.LocalSearchVRP;
 
 /**
  * @author Stamatis Pitsios
  */
-public class TestComponent4 {
+public class TestComponent5 {
 
     public static void main(String[] args) {
 
@@ -28,14 +30,18 @@ public class TestComponent4 {
         // Repeat until no better solution found
         while (true) {
             IntraRelocationMove intraRelocationMove = localSearchVRP.findBestIntraRelocationMove(solution);
+            InterRelocationMove interRelocationMove = localSearchVRP.findBestInterRelocationMove(solution);
 
             // Increase number of iterations
             iterations++;
 
-            if (intraRelocationMove.getCost() >= 0)
+            if (intraRelocationMove.getCost() >= 0 && interRelocationMove.getCost() >= 0)
                 break;
             else {
-                localSearchVRP.applyIntraRelocationMove(solution, intraRelocationMove);
+                if (interRelocationMove.getCost() < intraRelocationMove.getCost())
+                    localSearchVRP.applyInterRelocationMove(solution, interRelocationMove);
+                else
+                    localSearchVRP.applyIntraRelocationMove(solution, intraRelocationMove);
 
                 // Print the new total cost
                 System.out.println("Iteration " + iterations + " - New Total Cost: " + solution.getTotalCost());

@@ -6,7 +6,7 @@ package component4;
  * Every instance of this class represents a relocation move of a specific customer after another customer, within the
  * same route.
  */
-class IntraRelocationMove {
+public class IntraRelocationMove {
 
     /**
      * The route in which the relocation move refers.
@@ -62,7 +62,7 @@ class IntraRelocationMove {
         this.relocationPosition = relocationPosition;
     }
 
-    double getCost() {
+    public double getCost() {
         return cost;
     }
 

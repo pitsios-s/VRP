@@ -25,5 +25,4 @@ public class TestComponent2 {
             System.out.println();
         }
     }
-
 }

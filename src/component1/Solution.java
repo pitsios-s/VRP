@@ -46,9 +46,14 @@ public class Solution {
 
     @Override
     public String toString() {
-        return "Solution{" +
-                "routes=" + routes +
-                ", totalCost=" + totalCost +
-                '}';
+        String result = "Solution{" +
+                "totalCost=" + totalCost +
+                ", routes=[";
+
+        for (Route vehicle: this.routes) {
+            result += "\n\t" + vehicle;
+        }
+
+        return result + "]}";
     }
 }

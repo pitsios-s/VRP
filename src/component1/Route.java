@@ -104,11 +104,16 @@ public class Route {
 
     @Override
     public String toString() {
-        return "Route{" +
+        String result =  "Route{" +
                 "capacity=" + capacity +
                 ", load=" + load +
-                ", route=" + route +
                 ", cost=" + cost +
-                '}';
+                ", route=[";
+
+        for (Node customer: this.route) {
+            result += "\n\t\t" + customer;
+        }
+
+        return result + "]}";
     }
 }

@@ -8,7 +8,7 @@ import component4.LocalSearchVRP;
 /**
  * @author Stamatis Pitsios
  */
-public class TestComponent5 {
+class TestComponent5 {
 
     public static void main(String[] args) {
 
@@ -49,6 +49,6 @@ public class TestComponent5 {
         }
 
         // Print the best solution found
-        System.out.print(solution);
+        System.out.println(solution);
     }
 }

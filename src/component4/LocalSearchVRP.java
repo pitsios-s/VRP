@@ -51,7 +51,7 @@ public class LocalSearchVRP {
                 Node successor = solution.getRoutes().get(i).getRoute().get(j + 1);
 
                 // Loop for every possible relocation position
-                for (int k = 1; k < solution.getRoutes().get(i).getRoute().size() - 1; k++) {
+                for (int k = 0; k < solution.getRoutes().get(i).getRoute().size() - 1; k++) {
 
                     // If the 2 customers are the same in the current iteration, ignore this iteration
                     if (j == k || k == j - 1)

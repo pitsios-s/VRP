@@ -31,34 +31,34 @@ public class IntraRelocationMove {
     /**
      * Default Constructor
      */
-    IntraRelocationMove() {
+    public IntraRelocationMove() {
         this.route = -1;
         this.customerPosition = -1;
         this.relocationPosition = -1;
         this.cost = Double.MAX_VALUE;
     }
 
-    int getRoute() {
+    public int getRoute() {
         return route;
     }
 
-    void setRoute(int route) {
+    public void setRoute(int route) {
         this.route = route;
     }
 
-    int getCustomerPosition() {
+    public int getCustomerPosition() {
         return customerPosition;
     }
 
-    void setCustomerPosition(int customerPosition) {
+    public void setCustomerPosition(int customerPosition) {
         this.customerPosition = customerPosition;
     }
 
-    int getRelocationPosition() {
+    public int getRelocationPosition() {
         return relocationPosition;
     }
 
-    void setRelocationPosition(int relocationPosition) {
+    public void setRelocationPosition(int relocationPosition) {
         this.relocationPosition = relocationPosition;
     }
 
@@ -66,7 +66,7 @@ public class IntraRelocationMove {
         return cost;
     }
 
-    void setCost(double cost) {
+    public void setCost(double cost) {
         this.cost = cost;
     }
 }

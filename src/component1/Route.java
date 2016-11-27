@@ -94,6 +94,21 @@ public class Route {
         return this.route.remove(index);
     }
 
+    /**
+     * Creates and returns an exact copy of this route.
+     *
+     * @return Route, a copy of this route.
+     */
+    Route cloneRoute() {
+        Route clone = new Route(this.capacity);
+
+        clone.cost = this.cost;
+        clone.load = this.load;
+        clone.route = new ArrayList<>(this.route);
+
+        return clone;
+    }
+
     public double getCost() {
         return cost;
     }

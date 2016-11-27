@@ -6,7 +6,7 @@ import component3.GreedyVRP;
 /**
  * @author Stamatis Pitsios
  */
-public class TestComponent4 {
+class TestComponent4 {
 
     public static void main(String[] args) {
 
@@ -43,6 +43,6 @@ public class TestComponent4 {
         }
 
         // Print the best solution found
-        System.out.print(solution);
+        System.out.println(solution);
     }
 }

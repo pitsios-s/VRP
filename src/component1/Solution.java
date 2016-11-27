@@ -44,6 +44,23 @@ public class Solution {
         this.totalCost = totalCost;
     }
 
+    /**
+     * This function creates and returns an exact copy of the current solution
+     *
+     * @return Solution, a copy of this solution.
+     */
+    public Solution cloneSolution() {
+        Solution clone = new Solution();
+
+        clone.totalCost = this.totalCost;
+
+        for (Route route: this.routes) {
+            clone.routes.add(route.cloneRoute());
+        }
+
+        return clone;
+    }
+
     @Override
     public String toString() {
         String result = "Solution{" +

@@ -3,12 +3,11 @@ package component6;
 import component1.Solution;
 import component3.GreedyVRP;
 import component4.IntraRelocationMove;
-import component4.LocalSearchVRP;
 
 /**
  * @author Stamatis Pitsios
  */
-public class TestComponent6 {
+class TestComponent6 {
 
     public static void main(String[] args) {
 
@@ -37,7 +36,7 @@ public class TestComponent6 {
         for (int i = 1; i <= tabuIterations; i++) {
 
             // Find the best possible intra-relocation move
-            IntraRelocationMove intraRelocationMove = tabuSearchVRP.findBestIntraRelocationMove(solution);
+            IntraRelocationMove intraRelocationMove = tabuSearchVRP.findBestIntraRelocationMove(solution, i);
 
             // Apply the move found
             tabuSearchVRP.applyIntraRelocationMove(solution, intraRelocationMove, i);

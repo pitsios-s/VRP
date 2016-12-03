@@ -22,29 +22,11 @@ class TabuArc {
         this.to = to;
     }
 
-    public int getFrom() {
+    int getFrom() {
         return from;
     }
 
-    public int getTo() {
+    int getTo() {
         return to;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TabuArc tabuArc = (TabuArc) o;
-
-        if (from != tabuArc.from) return false;
-        return to == tabuArc.to;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = from;
-        result = 31 * result + to;
-        return result;
     }
 }

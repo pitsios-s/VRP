@@ -144,6 +144,11 @@ public class LocalSearchVRP {
                     if (i == k)
                         continue;
 
+                    // If the demand of the relocated customer cannot be served by the new vehicle, continue with the next one
+                    if (solution.getRoutes().get(k).getLoad() + relocatedCustomer.getDemand() >
+                            solution.getRoutes().get(k).getCapacity())
+                        continue;
+
                     // Loop for every customer within the second route
                     for (int l = 0; l < solution.getRoutes().get(k).getRoute().size() - 1; l++) {
                         // The node after which "relocatedCustomer" is going to be inserted.

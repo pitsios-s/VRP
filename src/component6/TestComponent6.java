@@ -3,6 +3,7 @@ package component6;
 import component1.Solution;
 import component3.GreedyVRP;
 import component4.IntraRelocationMove;
+import component5.InterRelocationMove;
 
 /**
  * @author Stamatis Pitsios
@@ -38,16 +39,23 @@ class TestComponent6 {
             // Find the best possible intra-relocation move
             IntraRelocationMove intraRelocationMove = tabuSearchVRP.findBestIntraRelocationMove(solution, i);
 
-            // Apply the move found
-            tabuSearchVRP.applyIntraRelocationMove(solution, intraRelocationMove, i);
+            // Find the best possible inter-relocation move
+            InterRelocationMove interRelocationMove = tabuSearchVRP.findBestInterRelocationMove(solution, i);
 
+            // Apply the best move between inter and intra
+            if (intraRelocationMove.getCost() < interRelocationMove.getCost())
+                tabuSearchVRP.applyIntraRelocationMove(solution, intraRelocationMove, i);
+            else
+                tabuSearchVRP.applyInterRelocationMove(solution, interRelocationMove, i);
+
+            // If the current solution that came up is the best solution ever seen, store it
             if (solution.getTotalCost() < bestSolution.getTotalCost()) {
                 bestSolution = solution.cloneSolution();
                 bestIteration = i;
             }
 
             // Print the new total cost
-            System.out.println("Iteration " + i + " - New Total Cost: " + solution.getTotalCost());
+            //System.out.println("Iteration " + i + " - New Total Cost: " + solution.getTotalCost());
         }
 
         // Print the best solution found

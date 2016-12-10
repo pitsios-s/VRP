@@ -221,10 +221,8 @@ class TabuSearchVRP {
                         TabuArc arc2 = new TabuArc(predecessor.getId(), successor.getId());
                         TabuArc arc3 = new TabuArc(after.getId(), relocatedCustomer.getId());
 
-                        // If the move is the best found so far and the relocation of a customer into a new route does not exceeds the vehicle's capacity, store the move.
-                        if (newCost < move.getCost() &&
-                                solution.getRoutes().get(k).getLoad() + relocatedCustomer.getDemand() <= solution.getRoutes().get(k).getCapacity() &&
-                                !isTabuMove(arc1, arc2, arc3, iteration)) {
+                        // If the move is the best found so far and it is not tabu, store the move.
+                        if (newCost < move.getCost() && !isTabuMove(arc1, arc2, arc3, iteration)) {
                             move.setRouteFrom(i);
                             move.setRouteTo(k);
                             move.setCustomerPosition(j);

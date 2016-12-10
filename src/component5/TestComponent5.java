@@ -2,8 +2,8 @@ package component5;
 
 import component1.Solution;
 import component3.GreedyVRP;
+import component4.IntraLocalSearchVRP;
 import component4.IntraRelocationMove;
-import component4.LocalSearchVRP;
 
 /**
  * @author Stamatis Pitsios
@@ -18,8 +18,10 @@ class TestComponent5 {
         // Find a greedy solution
         Solution solution = greedyVRP.findSolution();
 
-        // Initialize a LocalSearchVRP instance
-        LocalSearchVRP localSearchVRP = new LocalSearchVRP(greedyVRP.getDistanceMatrix());
+        // Initialize an IntraLocalSearch and InterLocalSearch objects
+        IntraLocalSearchVRP intraLocalSearchVRP = new IntraLocalSearchVRP(greedyVRP.getDistanceMatrix());
+        InterLocalSearchVRP interLocalSearchVRP = new InterLocalSearchVRP(greedyVRP.getDistanceMatrix());
+
 
         // The number of iterations that the local search algorithm performed.
         int iterations = 0;
@@ -29,8 +31,8 @@ class TestComponent5 {
 
         // Repeat until no better solution found
         while (true) {
-            IntraRelocationMove intraRelocationMove = localSearchVRP.findBestIntraRelocationMove(solution);
-            InterRelocationMove interRelocationMove = localSearchVRP.findBestInterRelocationMove(solution);
+            IntraRelocationMove intraRelocationMove = intraLocalSearchVRP.findBestIntraRelocationMove(solution);
+            InterRelocationMove interRelocationMove = interLocalSearchVRP.findBestInterRelocationMove(solution);
 
             // Increase number of iterations
             iterations++;
@@ -39,9 +41,9 @@ class TestComponent5 {
                 break;
             else {
                 if (interRelocationMove.getCost() < intraRelocationMove.getCost())
-                    localSearchVRP.applyInterRelocationMove(solution, interRelocationMove);
+                    interLocalSearchVRP.applyInterRelocationMove(solution, interRelocationMove);
                 else
-                    localSearchVRP.applyIntraRelocationMove(solution, intraRelocationMove);
+                    intraLocalSearchVRP.applyIntraRelocationMove(solution, intraRelocationMove);
 
                 // Print the new total cost
                 System.out.println("Iteration " + iterations + " - New Total Cost: " + solution.getTotalCost());

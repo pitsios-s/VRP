@@ -17,7 +17,7 @@ class TestComponent4 {
         Solution solution = greedyVRP.findSolution();
 
         // Initialize a LocalSearchVRP instance
-        LocalSearchVRP localSearchVRP = new LocalSearchVRP(greedyVRP.getDistanceMatrix());
+        IntraLocalSearchVRP intraLocalSearchVRP = new IntraLocalSearchVRP(greedyVRP.getDistanceMatrix());
 
         // The number of iterations that the local search algorithm performed.
         int iterations = 0;
@@ -27,7 +27,7 @@ class TestComponent4 {
 
         // Repeat until no better solution found
         while (true) {
-            IntraRelocationMove intraRelocationMove = localSearchVRP.findBestIntraRelocationMove(solution);
+            IntraRelocationMove intraRelocationMove = intraLocalSearchVRP.findBestIntraRelocationMove(solution);
 
             // Increase number of iterations
             iterations++;
@@ -35,7 +35,7 @@ class TestComponent4 {
             if (intraRelocationMove.getCost() >= 0)
                 break;
             else {
-                localSearchVRP.applyIntraRelocationMove(solution, intraRelocationMove);
+                intraLocalSearchVRP.applyIntraRelocationMove(solution, intraRelocationMove);
 
                 // Print the new total cost
                 System.out.println("Iteration " + iterations + " - New Total Cost: " + solution.getTotalCost());

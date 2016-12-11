@@ -37,10 +37,10 @@ class TestComponent6 {
         for (int i = 1; i <= tabuIterations; i++) {
 
             // Find the best possible intra-relocation move
-            IntraRelocationMove intraRelocationMove = tabuSearchVRP.findBestIntraRelocationMove(solution, i);
+            IntraRelocationMove intraRelocationMove = tabuSearchVRP.findBestIntraRelocationMove(solution, i, bestSolution);
 
             // Find the best possible inter-relocation move
-            InterRelocationMove interRelocationMove = tabuSearchVRP.findBestInterRelocationMove(solution, i);
+            InterRelocationMove interRelocationMove = tabuSearchVRP.findBestInterRelocationMove(solution, i, bestSolution);
 
             // Apply the best move between inter and intra
             if (intraRelocationMove.getCost() < interRelocationMove.getCost())

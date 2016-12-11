@@ -28,6 +28,17 @@ class TabuSearchVRP {
      */
     private int[][] tabuMatrix;
 
+    /**
+     * TOLERANCE: a very small positive value just to be sure about the various comparisons
+     */
+    private static final double TOLERANCE = 0.000001;
+
+    /**
+     * Constructor
+     *
+     * @param horizon The tabu horizon
+     * @param distanceMatrix The distance matrix
+     */
     TabuSearchVRP(int horizon, double[][] distanceMatrix) {
         this.tabuHorizon = horizon;
         this.distanceMatrix = distanceMatrix;
@@ -45,9 +56,10 @@ class TabuSearchVRP {
      * Finds the best possible neighbor of a given solution, by checking all possible intra-route relocation moves.
      *
      * @param solution The solution which we want to improve
+     * @param bestSolution The best solution encountered so far
      * @return IntraRelocationMove the best possible intra relocation move
      */
-    IntraRelocationMove findBestIntraRelocationMove(Solution solution, int iteration) {
+    IntraRelocationMove findBestIntraRelocationMove(Solution solution, int iteration, Solution bestSolution) {
 
         // Create an IntraRelocationMove object
         IntraRelocationMove relocationMove = new IntraRelocationMove();
@@ -97,7 +109,8 @@ class TabuSearchVRP {
                     TabuArc arc3 = new TabuArc(after.getId(), relocatedCustomer.getId());
 
                     // If the move is the best found so far, store it
-                    if (newCost < relocationMove.getCost() && !isTabuMove(arc1, arc2, arc3, iteration)) {
+                    if (newCost < relocationMove.getCost() &&
+                            !isTabuMove(arc1, arc2, arc3, iteration, solution, bestSolution, newCost)) {
                         relocationMove.setCost(newCost);
                         relocationMove.setRoute(i);
                         relocationMove.setCustomerPosition(j);
@@ -152,9 +165,10 @@ class TabuSearchVRP {
      * Finds the best possible neighbor of a given solution, by checking all possible inter-route relocation moves.
      *
      * @param solution The solution which we want to improve
+     * @param bestSolution The best solution encountered so far
      * @return InterRelocationMove the best possible inter relocation move
      */
-    InterRelocationMove findBestInterRelocationMove(Solution solution, int iteration) {
+    InterRelocationMove findBestInterRelocationMove(Solution solution, int iteration, Solution bestSolution) {
 
         // The best inter-relocation move found so far.
         InterRelocationMove move = new InterRelocationMove();
@@ -222,7 +236,8 @@ class TabuSearchVRP {
                         TabuArc arc3 = new TabuArc(after.getId(), relocatedCustomer.getId());
 
                         // If the move is the best found so far and it is not tabu, store the move.
-                        if (newCost < move.getCost() && !isTabuMove(arc1, arc2, arc3, iteration)) {
+                        if (newCost < move.getCost() &&
+                                !isTabuMove(arc1, arc2, arc3, iteration, solution, bestSolution, newCost)) {
                             move.setRouteFrom(i);
                             move.setRouteTo(k);
                             move.setCustomerPosition(j);
@@ -290,10 +305,22 @@ class TabuSearchVRP {
      * @param arc2 The second arc
      * @param arc3 The third arc
      * @param iteration The number of iteration
+     * @param s The current solution of the Tabu Search Algorithm
+     * @param bestSol The best solution encountered so far
+     * @param moveCost The move cost of the current neighbor
      * @return True of False
      */
-    private boolean isTabuMove(TabuArc arc1, TabuArc arc2, TabuArc arc3, int iteration) {
-        return (iteration <= tabuMatrix[arc1.getFrom()][arc1.getTo()]) &&
+    private boolean isTabuMove(TabuArc arc1, TabuArc arc2, TabuArc arc3, int iteration, Solution s, Solution bestSol, double moveCost) {
+
+        /*
+         * First part is the aspiration criterion: if the move leads to the best solution ever encountered this move is NOT tabu
+         *
+         * The other 3 parts of the condition check if all of the given arcs are marked as tabu in the current iteration.
+         * If all of them are tabu, then do not allow the move.
+         * But if at least one arc is not marked as tabu, then the move is not tabu.
+         */
+        return !(s.getTotalCost() + moveCost < bestSol.getTotalCost() - TOLERANCE ) &&
+                (iteration <= tabuMatrix[arc1.getFrom()][arc1.getTo()]) &&
                 (iteration <= tabuMatrix[arc2.getFrom()][arc2.getTo()]) &&
                 (iteration <= tabuMatrix[arc3.getFrom()][arc3.getTo()]);
     }
